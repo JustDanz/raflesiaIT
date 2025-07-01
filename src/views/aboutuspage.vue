@@ -129,18 +129,22 @@ const memberTypes = ref([
         <h1 class="hero-title">Tentang <span>RaflesiaIT</span></h1>
         <p class="hero-subtitle">Komunitas Cyber Security Indonesia</p>
         <p class="hero-motto">"Menyerang dan Bertahan untuk Melindungi"</p>
-        <div class="social-links">
-          <a 
-            v-for="(link, index) in socialLinks" 
-            :key="index" 
-            :href="link.url" 
-            target="_blank" 
-            class="social-link"
-          >
-            <FontAwesomeIcon :icon="link.icon" class="social-icon" />
-            <span>{{ link.name }}</span>
-          </a>
-        </div>
+  <div class="social-container">
+  <div class="social-links">
+    <a 
+      v-for="(link, index) in socialLinks" 
+      :key="index" 
+      :href="link.url" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      class="social-link"
+      :class="'social-' + link.name.toLowerCase()"
+    >
+      <FontAwesomeIcon :icon="link.icon" class="social-icon" />
+      <span class="social-text">{{ link.name }}</span>
+    </a>
+  </div>
+</div>
       </div>
     </header>
 
@@ -302,8 +306,13 @@ const memberTypes = ref([
 </template>
 
 <style scoped>
+
+h2 {
+  color: white;
+}
+
 .about-page {
-  margin-top: 70px;
+  margin-top: 170px;
   background-color: #ffffff;
   color: #333333;
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -405,38 +414,111 @@ const memberTypes = ref([
   bottom: -15px;
 }
 
-/* Social Links */
+.social-container {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 2.5rem;
+  padding: 0 1rem;
+}
+
 .social-links {
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 1.5rem; /* Meningkatkan gap antara item */
 }
 
 .social-link {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.8rem 1.5rem;
-  background-color: rgba(255, 255, 255, 0.1);
+  gap: 0.3rem;
+  padding: 1rem 1.8rem; /* Sedikit lebih besar padding */
   border-radius: 50px;
-  color: var(--white);
+  color: white;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   font-size: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.3);
   backdrop-filter: blur(5px);
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 0.1rem; /* Tambahkan margin untuk spacing ekstra */
+  min-width: 140px; /* Lebar minimum yang konsisten */
+  justify-content: center; /* Pusatkan konten */
 }
 
 .social-link:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-3px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .social-icon {
-  font-size: 1.2rem;
+  font-size: 1.3rem; /* Sedikit lebih besar */
+  width: 24px; /* Lebar tetap untuk alignment */
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.social-link:hover .social-icon {
+  transform: scale(1.2);
+}
+
+.social-text {
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Warna khusus untuk setiap social media */
+.social-instagram:hover {
+  background-color: #E1306C;
+  border-color: #E1306C;
+}
+
+.social-email:hover {
+  background-color: #D44638;
+  border-color: #D44638;
+}
+
+.social-youtube:hover {
+  background-color: #FF0000;
+  border-color: #FF0000;
+}
+
+.social-github:hover {
+  background-color: #333;
+  border-color: #333;
+}
+
+.social-linkedin:hover {
+  background-color: #0077B5;
+  border-color: #0077B5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .social-links {
+    gap: 1.2rem;
+  }
+  
+  .social-link {
+    padding: 0.9rem 1.5rem;
+    font-size: 0.95rem;
+    min-width: 120px;
+  }
+  
+  .social-icon {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .social-links {
+    gap: 1rem;
+  }
+  
+  .social-link {
+    padding: 0.8rem 1.2rem;
+    min-width: 110px;
+  }
 }
 
 /* Main Content */
@@ -1077,10 +1159,26 @@ const memberTypes = ref([
     font-size: 1.1rem;
   }
   
-  .social-link {
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
+      .social-container {
+    margin-top: 2rem;
   }
+  
+  .social-links {
+    gap: 0.8rem;
+  }
+  
+  .social-link {
+    padding: 0.7rem 1rem;
+    font-size: 0.85rem;
+    min-width: auto;
+    flex: 1 1 calc(50% - 1rem); /* Dua kolom di mobile */
+    max-width: calc(50% - 1rem);
+  }
+  
+  .social-icon {
+    font-size: 1.1rem;
+  }
+
   
   .founder-badge {
     padding: 0.8rem 1.5rem;
@@ -1110,4 +1208,13 @@ const memberTypes = ref([
     font-size: 1.1rem;
   }
 }
+
+@media (max-width: 360px) {
+  .social-link {
+    flex: 1 1 100%; /* Satu kolom di layar sangat kecil */
+    max-width: 100%;
+    justify-content: center;
+  }
+}
+
 </style>
