@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import NavbarLogin from '../../components/NavbarLogin.vue';
-import FooterAll from '../../components/FooterAll.vue';
+import NavbarLogin from '../../components/navbarlogin.vue';
+import FooterAll from '../../components/footerall.vue';
 import AdminSidebar from './AdminSidebar.vue';
 import DashboardSection from './DashboardSection.vue';
 import UsersSection from './UserSection.vue';
