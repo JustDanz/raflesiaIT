@@ -296,7 +296,7 @@ onMounted(() => {
     </section>
 
     <section class="journey">
-       <h2>Perjalanan Kami</h2>
+      <h2>Perjalanan Kami</h2>
       <div class="journey-container">
         <article class="journey-item fade-in">
           <div class="journey-number">100+</div>
@@ -448,10 +448,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem;
-    align-items: center;
-   
-   }
+h2 { font-size: 2.5rem; }
+.journey h2 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: white;
+}
+
 h3 { font-size: 1.5rem; }
 
 p {
