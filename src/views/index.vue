@@ -296,6 +296,7 @@ onMounted(() => {
     </section>
 
     <section class="journey">
+       <h2>Perjalanan Kami</h2>
       <div class="journey-container">
         <article class="journey-item fade-in">
           <div class="journey-number">100+</div>
