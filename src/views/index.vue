@@ -450,9 +450,10 @@ h1, h2, h3, h4, h5, h6 {
 h1 { font-size: 2.5rem; }
 h2 { font-size: 2.5rem; }
 .journey h2 {
-  font-size: 2.5rem;
+  font-size: 2.8rem;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  padding-bottom: 50px;
   color: white;
 }
 
