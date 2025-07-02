@@ -114,10 +114,10 @@ export default {
         <h1>Manage Courses</h1>
         <p class="subtitle">Create and manage your teaching courses</p>
       </div>
-      <button @click="toggleCourseForm" class="btn-primary add-course-btn">
-  <i class="fas" :class="showCourseForm ? 'fa-times' : 'fa-plus'"></i>
-  <span>{{ showCourseForm ? 'Cancel' : 'Add New Course' }}</span>
-</button>
+      <button @click="toggleCourseForm" class="btn btn-primary add-course-btn">
+        <i class="fas" :class="showCourseForm ? 'fa-times' : 'fa-plus'"></i>
+        <span>{{ showCourseForm ? 'Cancel' : 'Add New Course' }}</span>
+      </button>
     </div>
 
     <!-- Add Course Form -->
@@ -152,10 +152,10 @@ export default {
           <input v-model="newCourse.imageUrl" type="url" placeholder="https://example.com/image.jpg" />
         </div>
         <div class="form-actions">
-          <button @click="resetCourseForm" type="button" class="btn-secondary">
+          <button @click="resetCourseForm" type="button" class="btn btn-secondary">
             <i class="fas fa-undo"></i> Reset
           </button>
-          <button @click="editingCourse ? updateCourse() : addCourse()" type="button" class="btn-primary">
+          <button @click="editingCourse ? updateCourse() : addCourse()" type="button" class="btn btn-primary">
             <i :class="editingCourse ? 'fas fa-save' : 'fas fa-plus'"></i>
             {{ editingCourse ? 'Update Course' : 'Save Course' }}
           </button>
@@ -168,7 +168,7 @@ export default {
       <div v-if="courses.length === 0 && !showCourseForm" class="empty-state card">
         <i class="fas fa-book-open"></i>
         <p>No courses found</p>
-        <button @click="toggleCourseForm" class="btn-primary">Create Your First Course</button>
+        <button @click="toggleCourseForm" class="btn btn-primary">Create Your First Course</button>
       </div>
 
       <div v-else class="grid-container">
@@ -193,17 +193,17 @@ export default {
                 <span class="price free" v-else> Free </span>
               </div>
               <div class="actions">
-                <button @click="editCourse(course)" class="btn-icon" aria-label="Edit course">
+                <button @click="editCourse(course)" class="btn btn-icon" aria-label="Edit course">
                   <i class="fas fa-edit"></i>
                 </button>
                 <button
                   @click="$emit('confirm-delete', 'course', course.id)"
-                  class="btn-icon danger"
+                  class="btn btn-icon danger"
                   aria-label="Delete course"
                 >
                   <i class="fas fa-trash"></i>
                 </button>
-                <button @click="viewCourse(course.id)" class="btn-icon success" aria-label="View course">
+                <button @click="viewCourse(course.id)" class="btn btn-icon success" aria-label="View course">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
@@ -214,19 +214,98 @@ export default {
     </div>
   </section>
 </template>
-<style scoped>
-/* Course Section Styles */
 
+<style scoped>
+/* Base Button Styles */
+.btn {
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Primary Button (Add/Save Course) */
+.btn-primary {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+}
+
+/* Secondary Button (Reset) */
+.btn-secondary {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+  color: white;
+}
+
+/* Danger Button */
+.btn-danger {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+}
+
+/* Success Button */
+.btn-success {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+}
+
+/* Icon Button */
+.btn-icon {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #7f8c8d;
+}
+
+.btn-icon:hover {
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+}
+
+.btn-icon.danger:hover {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.btn-icon.success:hover {
+  background: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+}
+
+/* Course Section Specific Styles */
 .add-course-btn {
   background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
 }
 
-.btn-primary:not(.add-course-btn) {
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .grid-container {
@@ -353,13 +432,6 @@ export default {
 
 .form-row .form-group {
   flex: 1;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1.5rem;
 }
 
 .empty-state {

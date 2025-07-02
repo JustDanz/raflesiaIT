@@ -113,10 +113,10 @@ export default {
         <h1>Manage Blogs</h1>
         <p class="subtitle">Share your knowledge through articles</p>
       </div>
-   <button @click="toggleBlogForm" class="btn-primary add-blog-btn">
-  <i class="fas" :class="showBlogForm ? 'fa-times' : 'fa-plus'"></i>
-  <span>{{ showBlogForm ? 'Cancel' : 'Add New Blog' }}</span>
-</button>
+      <button @click="toggleBlogForm" class="btn btn-primary add-blog-btn">
+        <i class="fas" :class="showBlogForm ? 'fa-times' : 'fa-plus'"></i>
+        <span>{{ showBlogForm ? 'Cancel' : 'Add New Blog' }}</span>
+      </button>
     </div>
 
     <!-- Blog Form -->
@@ -151,10 +151,10 @@ export default {
           <input v-model="newBlog.tags" type="text" placeholder="vue, javascript, web-development" />
         </div>
         <div class="form-actions">
-          <button @click="resetBlogForm" type="button" class="btn-secondary">
+          <button @click="resetBlogForm" type="button" class="btn btn-secondary">
             <i class="fas fa-undo"></i> Reset
           </button>
-          <button @click="editingBlog ? updateBlog() : addBlog()" type="button" class="btn-primary">
+          <button @click="editingBlog ? updateBlog() : addBlog()" type="button" class="btn btn-primary">
             <i :class="editingBlog ? 'fas fa-save' : 'fas fa-plus'"></i>
             {{ editingBlog ? 'Update Blog' : 'Publish Blog' }}
           </button>
@@ -167,7 +167,7 @@ export default {
       <div v-if="blogs.length === 0 && !showBlogForm" class="empty-state card">
         <i class="fas fa-blog"></i>
         <p>No blogs published yet</p>
-        <button @click="toggleBlogForm" class="btn-primary">Write Your First Blog</button>
+        <button @click="toggleBlogForm" class="btn btn-primary">Write Your First Blog</button>
       </div>
 
       <div v-else class="blog-list">
@@ -196,17 +196,17 @@ export default {
                 </span>
               </div>
               <div class="blog-actions">
-                <button @click="editBlog(blog)" class="btn-icon" aria-label="Edit blog">
+                <button @click="editBlog(blog)" class="btn btn-icon" aria-label="Edit blog">
                   <i class="fas fa-edit"></i>
                 </button>
                 <button
                   @click="$emit('confirm-delete', 'blog', blog.id)"
-                  class="btn-icon danger"
+                  class="btn btn-icon danger"
                   aria-label="Delete blog"
                 >
                   <i class="fas fa-trash"></i>
                 </button>
-                <button @click="viewBlog(blog.id)" class="btn-icon success" aria-label="View blog">
+                <button @click="viewBlog(blog.id)" class="btn btn-icon success" aria-label="View blog">
                   <i class="fas fa-eye"></i>
                 </button>
               </div>
@@ -217,18 +217,98 @@ export default {
     </div>
   </section>
 </template>
-<style scoped>
 
+<style scoped>
+/* Base Button Styles */
+.btn {
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Primary Button (Add/Publish Blog) */
+.btn-primary {
+  background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
+  color: white;
+}
+
+/* Secondary Button (Reset) */
+.btn-secondary {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+  color: white;
+}
+
+/* Danger Button */
+.btn-danger {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+}
+
+/* Success Button */
+.btn-success {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+}
+
+/* Icon Button */
+.btn-icon {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #7f8c8d;
+}
+
+.btn-icon:hover {
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+}
+
+.btn-icon.danger:hover {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.btn-icon.success:hover {
+  background: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+}
+
+/* Blog Section Specific Styles */
 .add-blog-btn {
   background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
 }
 
-.btn-primary:not(.add-blog-btn) {
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .blog-list {

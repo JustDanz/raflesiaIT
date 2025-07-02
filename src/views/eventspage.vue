@@ -152,6 +152,7 @@ const events = [
   margin-bottom: 1.5rem;
   line-height: 1.2;
   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  color: #ffffff;
 }
 
 .page-subtitle {

@@ -158,10 +158,10 @@ export default {
         <h1>Manage Events</h1>
         <p class="subtitle">Organize workshops and webinars</p>
       </div>
-  <button @click="toggleEventForm" class="btn-primary add-event-btn">
-  <i class="fas" :class="showEventForm ? 'fa-times' : 'fa-plus'"></i>
-  <span>{{ showEventForm ? 'Cancel' : 'Add New Event' }}</span>
-</button>
+      <button @click="toggleEventForm" class="btn btn-primary add-event-btn">
+        <i class="fas" :class="showEventForm ? 'fa-times' : 'fa-plus'"></i>
+        <span>{{ showEventForm ? 'Cancel' : 'Add New Event' }}</span>
+      </button>
     </div>
 
     <!-- Event Form -->
@@ -210,10 +210,10 @@ export default {
           <input v-model="newEvent.registrationLink" type="url" placeholder="https://example.com/register" />
         </div>
         <div class="form-actions">
-          <button @click="resetEventForm" type="button" class="btn-secondary">
+          <button @click="resetEventForm" type="button" class="btn btn-secondary">
             <i class="fas fa-undo"></i> Reset
           </button>
-          <button @click="editingEvent ? updateEvent() : addEvent()" type="button" class="btn-primary">
+          <button @click="editingEvent ? updateEvent() : addEvent()" type="button" class="btn btn-primary">
             <i :class="editingEvent ? 'fas fa-save' : 'fas fa-plus'"></i>
             {{ editingEvent ? 'Update Event' : 'Create Event' }}
           </button>
@@ -226,7 +226,7 @@ export default {
       <div v-if="events.length === 0 && !showEventForm" class="empty-state card">
         <i class="fas fa-calendar-alt"></i>
         <p>No events scheduled yet</p>
-        <button @click="toggleEventForm" class="btn-primary">Schedule Your First Event</button>
+        <button @click="toggleEventForm" class="btn btn-primary">Schedule Your First Event</button>
       </div>
 
       <div v-else class="event-list">
@@ -261,12 +261,12 @@ export default {
                 <span v-else class="event-status ongoing">Ongoing</span>
               </div>
               <div class="event-actions">
-                <button @click="editEvent(event)" class="btn-icon" aria-label="Edit event">
+                <button @click="editEvent(event)" class="btn btn-icon" aria-label="Edit event">
                   <i class="fas fa-edit"></i>
                 </button>
                 <button
                   @click="$emit('confirm-delete', 'event', event.id)"
-                  class="btn-icon danger"
+                  class="btn btn-icon danger"
                   aria-label="Delete event"
                 >
                   <i class="fas fa-trash"></i>
@@ -274,7 +274,7 @@ export default {
                 <button
                   v-if="event.registrationLink"
                   @click="openRegistration(event.registrationLink)"
-                  class="btn-icon success"
+                  class="btn btn-icon success"
                   aria-label="View registration"
                 >
                   <i class="fas fa-external-link-alt"></i>
@@ -287,18 +287,98 @@ export default {
     </div>
   </section>
 </template>
-<style scoped>
 
+<style scoped>
+/* Base Button Styles */
+.btn {
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Primary Button (Add/Create Event) */
+.btn-primary {
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+  color: white;
+}
+
+/* Secondary Button (Reset) */
+.btn-secondary {
+  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+  color: white;
+}
+
+/* Danger Button */
+.btn-danger {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+}
+
+/* Success Button */
+.btn-success {
+  background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+  color: white;
+}
+
+/* Icon Button */
+.btn-icon {
+  background: none;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #7f8c8d;
+}
+
+.btn-icon:hover {
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+}
+
+.btn-icon.danger:hover {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.btn-icon.success:hover {
+  background: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+}
+
+/* Event Section Specific Styles */
 .add-event-btn {
   background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
 }
 
-.btn-primary:not(.add-event-btn) {
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-}
-
-.btn-danger {
-  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
 }
 
 .event-list {
@@ -324,7 +404,7 @@ export default {
 .event-date {
   width: 80px;
   min-height: 80px;
-  background: #3498db;
+  background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -368,8 +448,8 @@ export default {
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
   font-weight: 600;
-  background: rgba(52, 152, 219, 0.1);
-  color: #3498db;
+  background: rgba(155, 89, 182, 0.1);
+  color: #9b59b6;
 }
 
 .event-meta {
@@ -427,5 +507,43 @@ export default {
 
 .past-event {
   opacity: 0.8;
+}
+
+/* Form Styles */
+.form-container {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.empty-state i {
+  font-size: 3rem;
+  color: #bdc3c7;
+  margin-bottom: 1rem;
+}
+
+.empty-state p {
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
 }
 </style>

@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router';
-
 import Home from '../views/index.vue';
 import AcademyPage from '../views/academypage.vue';
 import AboutUsPage from '../views/aboutuspage.vue';
@@ -110,8 +109,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  // ⚠️ Penting: createWebHistory('') bukan '/'
-  history: createWebHistory(''), // kosong jika base URL sama dengan domain root
+  history: createWebHistory('/'),
   routes,
   scrollBehavior(_, __, savedPosition) {
     if (savedPosition) {
@@ -121,17 +119,14 @@ const router = createRouter({
   },
 });
 
-// Set judul halaman dinamis
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title || 'RaflesiaIT';
   next();
 });
 
-// Handle error router
 router.onError((error) => {
   console.error('Router error:', error);
-  // Bisa reload, atau arahkan ke NotFound
-  // window.location.reload(); // optional
+  window.location.reload();
 });
 
 export default router;
