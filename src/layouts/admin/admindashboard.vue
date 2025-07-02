@@ -189,7 +189,6 @@ onUnmounted(() => {
       </main>
     </div>
   </div>
-    <FooterAll />
 </template>
 
 <style scoped>
