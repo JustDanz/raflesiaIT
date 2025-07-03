@@ -1,7 +1,6 @@
 <script>
 import NavbarLogin from '../../components/navbarlogin.vue';
 import FooterAll from '../../components/footerall.vue';
-import CoursesSection from '../mentor/CourseSection.vue';
 import BlogsSection from '../mentor/BlogsSection.vue';
 import EventsSection from '../mentor/EventsSection.vue';
 import SettingsSection from '../mentor/SettingsSection.vue';
@@ -11,7 +10,6 @@ export default {
   components: {
     NavbarLogin,
     FooterAll,
-    CoursesSection,
     BlogsSection,
     EventsSection,
     SettingsSection,
@@ -22,7 +20,6 @@ export default {
       activeTab: 'courses',
       sidebarOpen: true,
       tabs: [
-        { id: 'courses', icon: 'fas fa-book', label: 'Courses' },
         { id: 'blogs', icon: 'fas fa-blog', label: 'Blogs' },
         { id: 'events', icon: 'fas fa-calendar-alt', label: 'Events' },
         { id: 'settings', icon: 'fas fa-cog', label: 'Settings' },
@@ -87,7 +84,6 @@ export default {
 
       <!-- Main Content -->
       <main class="main-content">
-        <CoursesSection v-if="activeTab === 'courses'" @confirm-delete="confirmDelete" @delete-item="deleteItem" />
         <BlogsSection v-if="activeTab === 'blogs'" @confirm-delete="confirmDelete" @delete-item="deleteItem" />
         <EventsSection v-if="activeTab === 'events'" @confirm-delete="confirmDelete" @delete-item="deleteItem" />
         <SettingsSection v-if="activeTab === 'settings'" @confirm-account-deletion="confirmAccountDeletion" />
