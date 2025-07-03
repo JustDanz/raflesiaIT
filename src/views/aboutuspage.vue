@@ -244,21 +244,24 @@ const memberTypes = ref([
         </div>
       </section>
 
-      <!-- History Section -->
-      <section class="section history-section">
-        <div class="section-header">
-          <h2 class="section-title">Sejarah Kami</h2>
-          <p class="section-description">Perjalanan RaflesiaIT dari awal hingga sekarang</p>
+<!-- History Section -->
+<section class="section history-section">
+  <div class="section-header">
+    <h2 class="section-title">Sejarah Kami</h2>
+    <p class="section-description">Perjalanan RaflesiaIT dari awal hingga sekarang</p>
+  </div>
+  <div class="timeline-container">
+    <div class="timeline-line"></div> <!-- Garis vertikal di tengah -->
+    <div class="timeline">
+      <div class="timeline-item" v-for="(item, index) in historyItems" :key="index">
+        <div class="timeline-year">{{ item.year }}</div>
+        <div class="timeline-content">
+          <p>{{ item.description }}</p>
         </div>
-        <div class="timeline">
-          <div class="timeline-item" v-for="(item, index) in historyItems" :key="index">
-            <div class="timeline-year">{{ item.year }}</div>
-            <div class="timeline-content">
-              <p>{{ item.description }}</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
       <!-- Membership Section -->
       <section class="section membership-section">
@@ -871,33 +874,39 @@ h2 {
 }
 
 /* History Section */
-.timeline {
+.timeline-container {
   position: relative;
   max-width: 900px;
   margin: 0 auto;
-  padding-left: 3rem;
+  padding: 0 20px;
 }
 
-.timeline::before {
-  content: '';
+.timeline-line {
   position: absolute;
-  left: 0;
+  left: 50%;
   top: 0;
   bottom: 0;
   width: 4px;
   background: linear-gradient(to bottom, #4a6cf7, #2a3f9d);
-  border-radius: 2px;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.timeline {
+  position: relative;
+  z-index: 2;
 }
 
 .timeline-item {
   position: relative;
   margin-bottom: 3rem;
-  padding-left: 3rem;
+  display: flex;
+  justify-content: center;
 }
 
 .timeline-year {
   position: absolute;
-  left: -2.9rem;
+  left: 50%;
   top: 0;
   transform: translateX(-50%);
   background-color: #4a6cf7;
@@ -909,6 +918,7 @@ h2 {
   box-shadow: 0 5px 15px rgba(74, 108, 247, 0.3);
   min-width: 80px;
   text-align: center;
+  z-index: 3;
 }
 
 .timeline-content {
@@ -918,6 +928,20 @@ h2 {
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
   border-left: 4px solid #4a6cf7;
   transition: all 0.3s ease;
+  width: calc(50% - 40px);
+  margin-top: 40px;
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+  margin-left: auto;
+  margin-right: 20px;
+  text-align: left;
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+  margin-right: auto;
+  margin-left: 20px;
+  text-align: right;
 }
 
 .timeline-content:hover {
@@ -931,7 +955,6 @@ h2 {
   line-height: 1.7;
   color: #555;
 }
-
 /* Membership Section */
 .member-grid {
   display: flex;
@@ -1139,6 +1162,21 @@ h2 {
   
   .cta-section p {
     font-size: 1.1rem;
+  }
+  .timeline-line {
+    left: 30px;
+  }
+  
+  .timeline-year {
+    left: 30px;
+    transform: none;
+  }
+  
+  .timeline-content {
+    width: calc(100% - 80px);
+    margin-left: 60px !important;
+    margin-right: 0 !important;
+    text-align: left !important;
   }
 }
 
