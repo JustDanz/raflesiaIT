@@ -76,7 +76,7 @@ const changeTab = (tab) => {
 
 .dashboard-container {
   max-width: 1400px;
-  margin: 100px auto 2rem;
+  margin: 150px auto 2rem;
   flex-grow: 1;
   display: flex;
   gap: 2rem;

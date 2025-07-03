@@ -106,42 +106,6 @@ export default {
         </form>
       </div>
 
-      <div class="settings-card card">
-        <h2><i class="fas fa-bell"></i> Notifications</h2>
-        <div class="notification-settings">
-          <div class="setting-item">
-            <div class="setting-info">
-              <h3>Email Notifications</h3>
-              <p>Receive email updates about your courses and students</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" v-model="notifications.email" />
-              <span class="slider round"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h3>System Messages</h3>
-              <p>Get important platform notifications</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" v-model="notifications.system" />
-              <span class="slider round"></span>
-            </label>
-          </div>
-          <div class="setting-item">
-            <div class="setting-info">
-              <h3>Promotional Offers</h3>
-              <p>Receive offers and discounts for mentor tools</p>
-            </div>
-            <label class="switch">
-              <input type="checkbox" v-model="notifications.promotions" />
-              <span class="slider round"></span>
-            </label>
-          </div>
-        </div>
-      </div>
-
       <div class="settings-card card danger-zone">
         <h2><i class="fas fa-exclamation-triangle"></i> Danger Zone</h2>
         <div class="danger-actions">

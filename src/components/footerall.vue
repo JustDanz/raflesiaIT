@@ -230,7 +230,7 @@ onMounted(() => {
 }
 
 .logo-img {
-  max-width: 75px;
+  max-width: 100px;
   align-items: center;
   display: block;
   margin: 0 auto;

@@ -598,6 +598,7 @@ header {
   font-size: 1rem;
   gap: 0.5rem;
   white-space: nowrap;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary {
@@ -618,6 +619,7 @@ header {
   background: transparent;
   color: white;
   border: 1px solid rgb(255, 255, 255);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-outline:hover {

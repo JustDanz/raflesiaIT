@@ -192,7 +192,7 @@ defineProps({
 
 .delete-account-btn {
   padding: 0.75rem 1.5rem;
-  background: var(--danger-color);
+  background: #d11466;
   color: white;
   border: none;
   border-radius: 6px;

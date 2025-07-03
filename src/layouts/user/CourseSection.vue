@@ -151,7 +151,7 @@ const purchasedCourses = ref([
   margin-top: auto;
   padding: 0.75rem;
   background: var(--primary-color);
-  color: white;
+  color: rgb(0, 0, 0);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -164,7 +164,8 @@ const purchasedCourses = ref([
 }
 
 .continue-btn:hover {
-  background: var(--secondary-color);
+  background: black;
   transform: translateY(-2px);
+  color: white;
 }
 </style>

@@ -113,8 +113,8 @@ const certificates = ref([
 
 .download-btn {
   padding: 0.6rem 1rem;
-  background: var(--primary-color);
-  color: white;
+  background: rebeccapurple;
+  color: rgb(255, 255, 255);
   border: none;
   border-radius: 6px;
   font-size: 0.85rem;
@@ -127,8 +127,12 @@ const certificates = ref([
   flex-shrink: 0;
 }
 
+
+
 .download-btn:hover {
   background: var(--secondary-color);
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: black;
 }
 </style>

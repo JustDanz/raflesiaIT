@@ -12,6 +12,17 @@ defineProps({
     type: Array,
     required: true
   },
+  cybersecurityTools: { // Prop baru untuk daftar tools cybersecurity
+    type: Array,
+    required: true,
+    default: () => [
+      { id: 1, name: 'Nmap' },
+      { id: 2, name: 'Wireshark' },
+      { id: 3, name: 'Metasploit' },
+      { id: 4, name: 'Burp Suite' },
+      { id: 5, name: 'John the Ripper' }
+    ]
+  },
   newCourse: {
     type: Object,
     required: true
@@ -73,6 +84,15 @@ defineEmits([
           <select class="form-control" v-model="newCourse.instructor_id" required>
             <option value="">Select Instructor</option>
             <option v-for="instructor in instructors" :key="instructor.instructors_id" :value="instructor.instructors_id">{{ instructor.name }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label>Cybersecurity Tool</label>
+          <select class="form-control" v-model="newCourse.cybersecurity_tool_id" required>
+            <option value="">Select Cybersecurity Tool</option>
+            <option v-for="tool in cybersecurityTools" :key="tool.id" :value="tool.id">{{ tool.name }}</option>
           </select>
         </div>
       </div>
@@ -138,6 +158,7 @@ defineEmits([
             <th>Price</th>
             <th>Level</th>
             <th>Instructor</th>
+            <th>Cybersecurity Tool</th> <!-- Kolom baru -->
             <th>Syllabus Items</th>
             <th>Thumbnail</th>
             <th>Actions</th>
@@ -150,6 +171,7 @@ defineEmits([
             <td>{{ course.price.toLocaleString('id-ID') }}</td>
             <td>{{ course.level }}</td>
             <td>{{ course.instructor_name }}</td>
+            <td>{{ course.cybersecurity_tool_name || 'N/A' }}</td> <!-- Kolom baru -->
             <td>{{ course.syllabus ? JSON.parse(course.syllabus).length : 0 }}</td>
             <td>
               <img v-if="course.thumbnail_url" :src="course.thumbnail_url" alt="Thumbnail" style="max-width: 50px; max-height: 50px;" />
@@ -168,7 +190,7 @@ defineEmits([
         <h2>Edit Course</h2>
         <form @submit.prevent="$emit('update-course')" class="form" enctype="multipart/form-data">
           <div class="form-row">
-            <div class="form-group col-md-6">
+            <div class abandonment="form-group col-md-6">
               <label>Title</label>
               <input type="text" class="form-control" v-model="editingCourse.title" required />
             </div>
@@ -191,6 +213,15 @@ defineEmits([
               <select class="form-control" v-model="editingCourse.instructor_id" required>
                 <option value="">Select Instructor</option>
                 <option v-for="instructor in instructors" :key="instructor.instructors_id" :value="instructor.instructors_id">{{ instructor.name }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>Cybersecurity Tool</label>
+              <select class="form-control" v-model="editingCourse.cybersecurity_tool_id" required>
+                <option value="">Select Cybersecurity Tool</option>
+                <option v-for="tool in cybersecurityTools" :key="tool.id" :value="tool.id">{{ tool.name }}</option>
               </select>
             </div>
           </div>
