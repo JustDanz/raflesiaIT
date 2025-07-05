@@ -10,7 +10,6 @@ defineProps({
   }
 });
 </script>
-
 <template>
   <div class="dashboard-message">{{ dashboardMessage }}</div>
   <div class="stats-grid">

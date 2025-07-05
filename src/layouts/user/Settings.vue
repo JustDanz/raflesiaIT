@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, ref } from 'vue'
 
 defineProps({
   userProfile: {
@@ -7,6 +7,25 @@ defineProps({
     required: true,
   },
 })
+
+const isPasswordUpdating = ref(false)
+const isProfileUpdating = ref(false)
+
+const updatePassword = () => {
+  isPasswordUpdating.value = true
+  // Simulate async operation (e.g., API call)
+  setTimeout(() => {
+    isPasswordUpdating.value = false
+  }, 2000)
+}
+
+const updateProfile = () => {
+  isProfileUpdating.value = true
+  // Simulate async operation (e.g., API call)
+  setTimeout(() => {
+    isProfileUpdating.value = false
+  }, 2000)
+}
 </script>
 
 <template>
@@ -33,8 +52,16 @@ defineProps({
             <input type="email" :value="userProfile.email" disabled />
           </div>
         </div>
-        <button class="save-btn">
-          <i class="fas fa-save"></i> Update Profile
+        <button 
+          class="save-btn update-profile-btn"
+          :disabled="isProfileUpdating"
+          @click="updateProfile"
+          aria-label="Update Profile"
+          :class="{ 'loading': isProfileUpdating }"
+        >
+          <i class="fas fa-save" :class="{ 'hidden': isProfileUpdating }"></i>
+          <span v-if="isProfileUpdating" class="spinner"></span>
+          <h4>{{ isProfileUpdating ? 'Updating...' : 'Update Profile' }}</h4>
         </button>
       </div>
 
@@ -61,8 +88,15 @@ defineProps({
             <input type="password" placeholder="Confirm New Password" />
           </div>
         </div>
-        <button class="save-btn">
-          <i class="fas fa-save"></i> Update Password
+        <button class="save-btn update-password-btn" 
+          :disabled="isPasswordUpdating"
+          @click="updatePassword"
+          aria-label="Update Password"
+          :class="{ 'loading': isPasswordUpdating }"
+        >
+          <i class="fas fa-save" :class="{ 'hidden': isPasswordUpdating }"></i>
+          <span v-if="isPasswordUpdating" class="spinner"></span>
+          <h4>{{ isPasswordUpdating ? 'Updating...' : 'Update Password' }}</h4>
         </button>
       </div>
 
@@ -76,7 +110,18 @@ defineProps({
     </div>
   </div>
 </template>
+
 <style scoped>
+i {
+  color: black;
+}
+
+h4 {
+  display: inline;
+  margin: 0;
+  font-size: 1rem;
+}
+
 .settings-form {
   max-width: 700px;
 }
@@ -149,7 +194,7 @@ defineProps({
 .save-btn {
   padding: 0.75rem 1.5rem;
   background: var(--primary-color);
-  color: white;
+  color: rgb(0, 0, 0);
   border: none;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -164,6 +209,74 @@ defineProps({
 .save-btn:hover {
   background: var(--secondary-color);
   transform: translateY(-2px);
+}
+
+.update-profile-btn {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0.85rem 2rem;
+  font-weight: 600;
+}
+
+.update-profile-btn:hover {
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+.update-profile-btn:disabled {
+  background: var(--light-gray);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.update-profile-btn .spinner {
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+.update-profile-btn .hidden {
+  display: none;
+}
+
+.update-password-btn {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 0.85rem 2rem;
+  font-weight: 600;
+}
+
+.update-password-btn:hover {
+  background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-3px);
+}
+
+.update-password-btn:disabled {
+  background: var(--light-gray);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.update-password-btn .spinner {
+  border: 2px solid white;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+.update-password-btn .hidden {
+  display: none;
 }
 
 .danger-zone {
@@ -207,5 +320,10 @@ defineProps({
 .delete-account-btn:hover {
   background: #d11466;
   transform: translateY(-2px);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 </style>
