@@ -1,494 +1,690 @@
-<template>
-  <div class="course-info-container">
-    <div class="course-header">
-      <h1>Chapter Informasi Pelaksanaan Kelas</h1>
-      <p class="course-subtitle">Live Class Purple Teaming Keamanan Aplikasi Web</p>
-    </div>
-
-    <div class="course-content">
-      <div class="chapter-section">
-        <h2><i class="fas fa-calendar-alt"></i> Jadwal Pelaksanaan</h2>
-        
-        <div class="chapter-list">
-          <div class="chapter-item">
-            <div class="chapter-icon"><i class="fas fa-laptop-code"></i></div>
-            <div>
-              <h3>Chapter Day 1 - Setup SIEM & Testing Environment</h3>
-              <p>Setup SIEM & Testing Environment</p>
-            </div>
-          </div>
-          
-          <div class="chapter-item">
-            <div class="chapter-icon"><i class="fas fa-search"></i></div>
-            <div>
-              <h3>Chapter Day 2 - Web Fuzzing & Discovery</h3>
-              <p>Web Fuzzing & Discovery</p>
-            </div>
-          </div>
-          
-          <div class="chapter-item">
-            <div class="chapter-icon"><i class="fas fa-chart-line"></i></div>
-            <div>
-              <h3>Chapter Day 3 - SIEM Reading</h3>
-              <p>SIEM Reading</p>
-            </div>
-          </div>
-          
-          <div class="chapter-item">
-            <div class="chapter-icon"><i class="fas fa-bug"></i></div>
-            <div>
-              <h3>Chapter Day 4 - Web Exploitation</h3>
-              <p>Web Exploitation</p>
-            </div>
-          </div>
-          
-          <div class="chapter-item">
-            <div class="chapter-icon"><i class="fas fa-shield-alt"></i></div>
-            <div>
-              <h3>Chapter Day 5 - Active Response & Verification</h3>
-              <p>Active Response And Verification</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <div class="info-card-header">
-          <i class="fas fa-info-circle"></i>
-          <h3>Informasi Penting</h3>
-        </div>
-        <div class="info-card-content">
-          <p>Link Zoom kelas kami umumkan melalui grup, notion, & email.</p>
-          <p>Video rekaman dapat diakses di website cyberkarta H+1 setelah kelas.</p>
-          <p>Sertifikat akan dikirim via email setelah semua kelas selesai.</p>
-        </div>
-      </div>
-
-      <div class="video-section">
-        <h2><i class="fab fa-youtube"></i> Materi Video Pembelajaran</h2>
-        <div class="video-container">
-          <iframe 
-            width="560" 
-            height="315" 
-            :src="'https://www.youtube.com/embed/' + youtubeVideoId" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            allowfullscreen>
-          </iframe>
-        </div>
-        <div class="video-actions">
-          <a :href="labLink" target="_blank" class="video-action-btn lab-btn">
-            <i class="fas fa-flask"></i> Link Lab Kelas
-          </a>
-          <a :href="telegramGroupLink" target="_blank" class="video-action-btn telegram-btn">
-            <i class="fab fa-telegram"></i> Grup Telegram
-          </a>
-        </div>
-      </div>
-
-      <div class="action-buttons">
-        <button class="action-btn review-btn">
-          <i class="fas fa-star"></i> Beri Review Kelas
-        </button>
-        <a :href="telegramGroupLink" target="_blank" class="action-btn group-btn">
-          <i class="fab fa-telegram"></i> Gabung Grup Diskusi
-        </a>
-        <a :href="labLink" target="_blank" class="action-btn lab-btn">
-          <i class="fas fa-flask"></i> Akses Link Lab
-        </a>
-      </div>
-
-      <div class="feedback-section">
-        <button class="feedback-btn">
-          <i class="fas fa-flag"></i> Laporkan Masalah
-        </button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 export default {
   data() {
     return {
-      youtubeVideoId: 'dQw4w9WgXcQ', // Replace with your actual YouTube video ID
-      telegramGroupLink: 'https://t.me/yourtelegramgroup', // Replace with your Telegram group link
-      labLink: 'https://example.com/lab-link' // Replace with your lab link
+      youtubeVideoId: 'dQw4w9WgXcQ',
+      telegramGroupLink: 'https://t.me/yourtelegramgroup',
+      labLink: 'https://example.com/lab-link',
+      completedChapters: [],
+      showReviewModal: false,
+      chapters: [
+        {
+          icon: 'fas fa-laptop-code',
+          title: 'Day 1 - Setup SIEM & Testing Environment',
+          description: 'Setup SIEM & Testing Environment'
+        },
+        {
+          icon: 'fas fa-search',
+          title: 'Day 2 - Web Fuzzing & Discovery',
+          description: 'Web Fuzzing & Discovery'
+        },
+        {
+          icon: 'fas fa-chart-line',
+          title: 'Day 3 - SIEM Reading',
+          description: 'SIEM Reading'
+        },
+        {
+          icon: 'fas fa-bug',
+          title: 'Day 4 - Web Exploitation',
+          description: 'Web Exploitation'
+        },
+        {
+          icon: 'fas fa-shield-alt',
+          title: 'Day 5 - Active Response & Verification',
+          description: 'Active Response And Verification'
+        }
+      ]
+    }
+  },
+  computed: {
+    allChaptersCompleted() {
+      return this.completedChapters.length === this.chapters.length;
+    },
+    progressPercentage() {
+      return (this.completedChapters.length / this.chapters.length) * 100;
+    }
+  },
+  methods: {
+    toggleChapterCompletion(index) {
+      if (this.completedChapters.includes(index)) {
+        this.completedChapters = this.completedChapters.filter(c => c !== index);
+      } else {
+        this.completedChapters.push(index);
+        this.completedChapters.sort();
+      }
+    },
+    downloadCertificate() {
+      alert('Sertifikat akan segera diunduh!');
+    },
+    reportIssue() {
+      alert('Terima kasih! Laporan Anda akan kami tindaklanjuti.');
+    },
+    toggleFullscreen() {
+      const container = this.$el.querySelector('.video-fullscreen-container');
+      if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => {
+          console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    },
+    goBackToDashboard() {
+      this.$router.push('/user-dashboard');
     }
   }
 }
 </script>
 
+<template>
+  <div class="course-container">
+    <!-- Fullscreen Video Section -->
+    <div class="video-fullscreen-container">
+      <div class="video-fullscreen-wrapper">
+        <iframe 
+          :src="'https://www.youtube.com/embed/' + youtubeVideoId" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+          allowfullscreen>
+        </iframe>
+        <button class="fullscreen-btn" @click="toggleFullscreen">
+          <i class="fas fa-expand"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <h1>Informasi Pelaksanaan Kelas</h1>
+      <p class="subtitle">Live Class Purple Teaming Keamanan Aplikasi Web</p>
+      <button class="btn-back" @click="goBackToDashboard">
+        <i class="fas fa-arrow-left"></i>
+        <span>Kembali ke Dashboard</span>
+      </button>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="main-content">
+      <!-- Left Column -->
+      <div class="left-column">
+        <!-- Schedule Section -->
+        <div class="section">
+          <h2><i class="fas fa-calendar-alt"></i> Jadwal Pelaksanaan</h2>
+          <div class="chapters">
+            <div 
+              v-for="(chapter, index) in chapters" 
+              :key="index"
+              class="chapter"
+              :class="{ completed: completedChapters.includes(index) }"
+              @click="toggleChapterCompletion(index)"
+            >
+              <div class="chapter-icon">
+                <i :class="chapter.icon"></i>
+              </div>
+              <div class="chapter-info">
+                <h3>{{ chapter.title }}</h3>
+                <p>{{ chapter.description }}</p>
+              </div>
+              <div class="check-icon" v-if="completedChapters.includes(index)">
+                <i class="fas fa-check"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column -->
+      <div class="right-column">
+        <!-- Progress Section -->
+        <div class="progress-section">
+          <div class="progress-header">
+            <span>Progress Kelas</span>
+            <span>{{ completedChapters.length }}/{{ chapters.length }}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" :style="{ width: progressPercentage + '%' }"></div>
+          </div>
+          <div class="progress-text">{{ Math.round(progressPercentage) }}% Complete</div>
+        </div>
+
+        <!-- Info Card -->
+        <div class="info-card">
+          <div class="info-header">
+            <i class="fas fa-info-circle"></i>
+            <h3>Informasi Penting</h3>
+          </div>
+          <div class="info-content">
+            <p><i class="fas fa-video"></i> Link Zoom kelas kami umumkan melalui grup, notion, & email</p>
+            <p><i class="fas fa-play-circle"></i> Video rekaman dapat diakses di website cyberkarta H+1 setelah kelas</p>
+            <p><i class="fas fa-certificate"></i> Sertifikat akan dikirim via email setelah semua kelas selesai</p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions">
+          <a :href="labLink" target="_blank" class="btn lab">
+            <i class="fas fa-flask"></i> 
+            <span>Link Lab Kelas</span>
+          </a>
+          <a :href="telegramGroupLink" target="_blank" class="btn telegram">
+            <i class="fab fa-telegram"></i> 
+            <span>Grup Telegram</span>
+          </a>
+          <button class="btn review" @click="showReviewModal = true">
+            <i class="fas fa-star"></i> 
+            <span>Beri Review</span>
+          </button>
+        </div>
+
+        <!-- Certificate Section -->
+        <div v-if="allChaptersCompleted" class="certificate">
+          <button class="btn-certificate" @click="downloadCertificate">
+            <i class="fas fa-award"></i> 
+            <span>Unduh Sertifikat</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <button class="btn-report" @click="reportIssue">
+        <i class="fas fa-flag"></i> 
+        <span>Laporkan Masalah</span>
+      </button>
+    </div>
+  </div>
+</template>
+
 <style scoped>
-:root {
-  --primary-color: #6a4c93;
-  --primary-light: #9575cd;
-  --secondary-color: #8a5a44;
-  --secondary-light: #b58365;
-  --accent-color: #f8bbd0;
-  --accent-dark: #f48fb1;
-  --light-bg: #f9f7f3;
-  --dark-text: #2d3748;
-  --light-text: #4a5568;
-  --border-radius: 12px;
-  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  --transition: all 0.3s ease-in-out; /* Updated to ease-in-out for smoother transitions */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-.course-info-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: var(--dark-text);
-  background-color: white;
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  line-height: 1.6;
-}
-
-.course-header {
-  text-align: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.course-header h1 {
-  color: var(--primary-color);
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.course-subtitle {
-  color: var(--light-text);
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-i {
-  color : black;
-}
-
-h2 {
-  color: var(--primary-color);
-  font-size: 1.4rem;
-  margin: 1.8rem 0 1.2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-h2 i {
-  color: var(--accent-dark);
-}
-
-.chapter-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.chapter-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.2rem;
-  background-color: var(--light-bg);
-  border-radius: var(--border-radius);
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background-color 0.3s ease-in-out; /* Explicitly include all transitioned properties */
-}
-
-.chapter-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
-  background-color: #f1f0ec; /* Subtle background change */
-}
-
-.chapter-icon {
-  background-color: var(--primary-color);
+.course-container {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: #000;
+  min-height: 100vh;
   color: white;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
 }
 
-.chapter-item h3 {
-  color: var(--primary-color);
-  font-size: 1.1rem;
-  margin-bottom: 0.4rem;
-}
-
-.chapter-item p {
-  color: var(--light-text);
-  font-size: 0.95rem;
-  margin: 0;
-}
-
-.info-card {
-  background: linear-gradient(135deg, #f5f7fa 0%, #f8bbd0 100%);
-  border-radius: var(--border-radius);
-  padding: 1.5rem;
-  margin: 2rem 0;
-  box-shadow: var(--box-shadow);
-}
-
-.info-card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  margin-bottom: 1rem;
-}
-
-.info-card-header i {
-  color: var(--primary-color);
-  font-size: 1.5rem;
-}
-
-.info-card-header h3 {
-  margin: 0;
-  color: var(--primary-color);
-}
-
-.info-card-content {
-  padding-left: 0.5rem;
-}
-
-.info-card-content p {
-  margin: 0.6rem 0;
-  color: var(--dark-text);
-}
-
-.video-section {
-  margin: 3rem 0;
-}
-
-.video-container {
+/* Fixed Fullscreen Video Styles */
+.video-fullscreen-container {
   position: relative;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  width: 80%;
   height: 0;
-  overflow: hidden;
-  margin: 1.5rem 0 
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  background: #000;
+  margin: 0 auto;
 }
 
-.video-container iframe {
+.video-fullscreen-wrapper {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.video-fullscreen-wrapper iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.fullscreen-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0,0,0,0.5);
+  color: white;
   border: none;
-}
-
-.video-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 1.5rem;
-}
-
-.video-action-btn {
-  padding: 0.8rem 1.8rem;
-  border-radius: 50px;
-  font-weight: 600;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   cursor: pointer;
-  display: inline-flex;
+  z-index: 10;
+  display: flex;
   align-items: center;
-  gap: 0.7rem;
-  transition: background-color 0.3s ease-in-out, border-color 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Include all properties */
-  text-decoration: none;
-  font-size: 0.95rem;
-}
-
-.video-action-btn i {
-  font-size: 1.1rem;
-}
-
-.lab-btn {
-  background-color: var(--secondary-color);
-  color: white;
-  border: 2px solid var(--secondary-color);
-}
-
-.lab-btn:hover {
-  background-color: var(--secondary-light);
-  border-color: var(--secondary-light);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 90, 68, 0.3);
-}
-
-.telegram-btn {
-  background-color: #0088cc;
-  color: white;
-  border: 2px solid #0088cc;
-}
-
-.telegram-btn:hover {
-  background-color: #1e96d4;
-  border-color: #1e96d4;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);
-}
-
-.thank-you-card {
-  text-align: center;
-  padding: 2rem;
-  background-color: var(--light-bg);
-  border-radius: var(--border-radius);
-  margin: 2rem 0;
-}
-
-.thank-you-card h2 {
   justify-content: center;
-  color: var(--primary-color);
+  transition: all 0.3s ease;
 }
 
-.thank-you-card p {
-  margin: 1rem 0;
-  color: var(--light-text);
+.fullscreen-btn:hover {
+  background: rgba(0,0,0,0.8);
+  transform: scale(1.1);
 }
 
-.website-link {
+/* Header Styles */
+.header {
+  text-align: center;
+  margin: 2rem auto;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  max-width: 1400px;
+}
+
+.header h1 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.subtitle {
+  color: #718096;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  margin: 0;
+  font-weight: 500;
+}
+
+.btn-back {
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.1);
+  color: rgb(0, 0, 0);
+  border: 1px solid rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--primary-color);
-  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
   margin-top: 1rem;
-  transition: color 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth color and transform */
+  backdrop-filter: blur(10px);
 }
 
-.website-link:hover {
-  color: var(--primary-light);
-  transform: translateY(-1px); /* Subtle lift */
-  text-decoration: none;
+.btn-back:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(0, 100, 130, 0.5);
 }
 
-.action-buttons {
+.btn-back i {
+  font-size: 0.9em;
+}
+
+/* Main Content Grid */
+.main-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem 2rem;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.left-column {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin: 2.5rem 0;
-  justify-content: center;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-.action-btn {
-  padding: 0.9rem 1.8rem;
-  border: none;
-  border-radius: 50px;
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.section {
+  background: rgba(255, 255, 255, 0.95);
+  padding: clamp(1.5rem, 4vw, 2rem);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #2d3748;
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  margin: 0 0 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-weight: 600;
+}
+
+h2 i {
+  color: #667eea;
+  font-size: 1.2em;
+}
+
+/* Chapters Styles */
+.chapters {
+  display: grid;
+  gap: 1rem;
+}
+
+.chapter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+  background: #f7fafc;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.chapter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.chapter.completed {
+  background: linear-gradient(135deg, #68d391 0%, #48bb78 100%);
+  color: white;
+}
+
+.chapter.completed .chapter-info h3,
+.chapter.completed .chapter-info p {
+  color: white;
+}
+
+.chapter-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  width: clamp(40px, 8vw, 48px);
+  height: clamp(40px, 8vw, 48px);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  flex-shrink: 0;
+}
+
+.chapter.completed .chapter-icon {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.chapter-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.chapter-info h3 {
+  color: #2d3748;
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  margin: 0 0 0.25rem 0;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.chapter-info p {
+  color: #718096;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.check-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+/* Progress Section */
+.progress-section {
+  background: rgba(255, 255, 255, 0.95);
+  padding: clamp(1.5rem, 4vw, 2rem);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #2d3748;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+}
+
+.progress-bar {
+  background: #e2e8f0;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+  height: 100%;
+  transition: width 0.3s ease;
+  border-radius: 6px;
+}
+
+.progress-text {
+  text-align: center;
+  color: #718096;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  font-weight: 500;
+}
+
+/* Info Card */
+.info-card {
+  background: linear-gradient(135deg, #a9e4ff 0%, #a1f1ff 100%);
+  padding: clamp(1.5rem, 4vw, 2rem);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.info-header i {
+  color: #2d3748;
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+}
+
+.info-header h3 {
+  color: #2d3748;
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
+  margin: 0;
+  font-weight: 600;
+}
+
+.info-content p {
+  color: #2d3748;
+  margin: 0.75rem 0;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  line-height: 1.5;
+}
+
+.info-content i {
+  color: #667eea;
+  width: 20px;
+  margin-top: 0.1rem;
+  flex-shrink: 0;
+}
+
+/* Action Buttons */
+.actions {
+  display: grid;
+  gap: 1rem;
+}
+
+.btn {
+  padding: clamp(0.75rem, 3vw, 1rem) clamp(1rem, 4vw, 1.5rem);
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  min-height: 48px;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn i {
+  font-size: 1.1em;
+}
+
+.btn span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn.lab {
+  background: linear-gradient(135deg, #c4ebff 0%, #aff2ff 100%);
+  color: #2d3748;
+}
+
+.btn.telegram {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn.review {
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  color: #2d3748;
+}
+
+/* Certificate Section */
+.certificate {
+  text-align: center;
+}
+
+.btn-certificate {
+  padding: clamp(1rem, 4vw, 1.5rem) clamp(1.5rem, 5vw, 2rem);
+  background: linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%);
+  color: #2d3748;
+  border: none;
+  border-radius: 16px;
+  font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out; /* Include all properties */
-  text-decoration: none;
-  font-size: 0.95rem;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  font-size: clamp(1rem, 2.5vw, 1.1rem);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  min-height: 56px;
+  width: 100%;
 }
 
-.action-btn i {
-  font-size: 1.1rem;
-  color: black;
-}
-.action-btn a {
-  color: black;
+.btn-certificate:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
 }
 
-.review-btn {
-  background-color: var(--accent-color);
-  color: var(--dark-text);
-  border: 2px solid var(--accent-color);
-}
-
-.review-btn:hover {
-  background-color: white;
-  color: black;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(248, 187, 208, 0.4);
-  border-color: var(--accent-color); /* Ensure border persists */
-}
-
-.group-btn {
-  background-color: var(--primary-color);
-  color: rgb(0, 0, 0);
-  border: 2px solid var(--primary-color);
-}
-
-.group-btn:hover {
-  background-color: white;
-  color: var(--primary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(106, 76, 147, 0.3);
-  border-color: var(--primary-color); /* Ensure border persists */
-}
-
-.lab-btn {
-  background-color: var(--secondary-color);
-  color: rgb(0, 0, 0);
-  border: 2px solid var(--secondary-color);
-}
-
-.lab-btn:hover {
-  background-color: white;
-  color: var(--secondary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(138, 90, 68, 0.3);
-  border-color: var(--secondary-color); /* Ensure border persists */
-}
-
-.feedback-section {
+/* Footer */
+.footer {
   text-align: center;
   margin-top: 2rem;
+  padding: 0 2rem 2rem;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.feedback-btn {
-  padding: 0.7rem 1.5rem;
-  background-color: transparent;
-  border: 1px solid #e2e8f0;
-  border-radius: 50px;
-  color: var(--light-text);
+.btn-report {
+  padding: clamp(0.75rem, 3vw, 1rem) clamp(1rem, 4vw, 1.5rem);
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out, border-color 0.3s ease-in-out, transform 0.3s ease-in-out; /* Include all properties */
+  transition: all 0.3s ease;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
+  backdrop-filter: blur(10px);
 }
 
-.feedback-btn:hover {
-  background-color: #f8fafc;
-  color: var(--primary-color);
-  border-color: var(--accent-color);
-  transform: translateY(-2px); /* Subtle lift */
+.btn-report:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    padding: 0 1rem 1rem;
+  }
 }
 
 @media (max-width: 768px) {
-  .course-info-container {
+  .header {
     padding: 1.5rem;
+    margin: 1rem auto;
   }
   
-  .action-buttons, .video-actions {
+  .chapter {
     flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
   }
   
-  .action-btn, .video-action-btn {
-    width: 100%;
-    justify-content: center;
+  .chapter-icon {
+    align-self: center;
   }
   
-  .course-header h1 {
-    font-size: 1.6rem;
+  .check-icon {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
   }
   
-  h2 {
-    font-size: 1.3rem;
+  .info-content p {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.25rem;
   }
   
-  .chapter-item, .action-btn, .video-action-btn, .feedback-btn, .website-link {
-    transition: all 0.3s ease-in-out; /* Consistent transitions on mobile */
+  .info-content i {
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .header, .main-content {
+    padding: 1rem;
+  }
+  
+  .section {
+    padding: 1.25rem;
   }
 }
 </style>

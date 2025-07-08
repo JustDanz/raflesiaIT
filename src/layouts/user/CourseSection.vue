@@ -1,5 +1,8 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const purchasedCourses = ref([
   {
@@ -24,6 +27,10 @@ const purchasedCourses = ref([
     category: 'Programming',
   },
 ])
+
+const continueCourse = (courseId) => {
+  router.push({ name: 'CourseInformation', params: { id: courseId } })
+}
 </script>
 
 <template>
@@ -48,7 +55,7 @@ const purchasedCourses = ref([
             <span class="progress-text">{{ course.progress }}% Complete</span>
             <span class="progress-percentage">{{ course.progress }}%</span>
           </div>
-          <button class="continue-btn">
+          <button class="continue-btn" @click="continueCourse(course.id)">
             <i class="fas fa-play"></i> Continue
           </button>
         </div>

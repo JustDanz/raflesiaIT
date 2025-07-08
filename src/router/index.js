@@ -94,12 +94,13 @@ const routes = [
     component: UserDashboard,
     meta: { title: 'User Dashboard - RaflesiaIT', layout: 'user' },
   },
-  {
-    path: '/course-info',
-    name: 'CourseInformation',
-    component: CourseInformation,
-    meta: { title: 'Course Information - RaflesiaIT', layout: 'user' },
-  },
+ {
+  path: '/course-info/:id?',
+  name: 'CourseInformation',
+  component: CourseInformation,
+  props: true,
+  meta: { title: 'Course Information - RaflesiaIT', layout: 'user' },
+},
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',

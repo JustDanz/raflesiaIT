@@ -1,6 +1,6 @@
 <script setup>
+import { ref, computed } from 'vue';
 import { useAdmin } from './useAdmin';
-import { onMounted, ref } from 'vue';
 
 const { getYoutubeEmbedUrl } = useAdmin();
 
@@ -58,10 +58,6 @@ defineEmits([
   'remove-edit-syllabus-item'
 ]);
 
-// Choices.js instance ref
-const toolsSelect = ref(null);
-const categorySelect = ref(null);
-
 // Course categories
 const courseCategories = ref([
   { id: 1, name: 'Ethical Hacking' },
@@ -72,45 +68,116 @@ const courseCategories = ref([
   { id: 6, name: 'Secure Coding' }
 ]);
 
-// Initialize Choices.js
-onMounted(() => {
-  // Initialize tools select
-  if (document.getElementById('cybersecurity-tools-select')) {
-    toolsSelect.value = new Choices('#cybersecurity-tools-select', {
-      removeItemButton: true,
-      searchEnabled: true,
-      duplicateItemsAllowed: false,
-      placeholder: true,
-      placeholderValue: 'Select tools...',
-      searchPlaceholderValue: 'Search tools...'
-    });
+// Cybersecurity tools
+const cybersecurityToolsOptions = ref([...props.cybersecurityTools]);
+const newToolName = ref('');
+const showToolDropdown = ref(false);
+const showCategoryDropdown = ref(false);
+const showEditToolDropdown = ref(false);
+const showEditCategoryDropdown = ref(false);
 
-    // Initialize category select
-    categorySelect.value = new Choices('#course-category-select', {
-      searchEnabled: true,
-      placeholder: true,
-      placeholderValue: 'Select category...',
-      searchPlaceholderValue: 'Search category...',
-      shouldSort: false
-    });
+// Add new tool function
+const addNewTool = () => {
+  if (newToolName.value.trim()) {
+    const newTool = {
+      id: Math.floor(Math.random() * 10000000),
+      name: newToolName.value.trim(),
+      isNew: true
+    };
+    cybersecurityToolsOptions.value.push(newTool);
+    
+    if (!Array.isArray(props.newCourse.cybersecurity_tool_ids)) {
+      props.newCourse.cybersecurity_tool_ids = [];
+    }
+    props.newCourse.cybersecurity_tool_ids.push(newTool.id);
+    newToolName.value = '';
   }
+};
+
+// Add new tool in edit mode
+const addNewEditTool = () => {
+  if (newToolName.value.trim()) {
+    const newTool = {
+      id: Math.floor(Math.random() * 10000000),
+      name: newToolName.value.trim(),
+      isNew: true
+    };
+    cybersecurityToolsOptions.value.push(newTool);
+    
+    if (!Array.isArray(props.editingCourse.cybersecurity_tool_ids)) {
+      props.editingCourse.cybersecurity_tool_ids = [];
+    }
+    props.editingCourse.cybersecurity_tool_ids.push(newTool.id);
+    newToolName.value = '';
+  }
+};
+
+// Toggle tool selection
+const toggleToolSelection = (toolId) => {
+  if (!Array.isArray(props.newCourse.cybersecurity_tool_ids)) {
+    props.newCourse.cybersecurity_tool_ids = [];
+  }
+  
+  const index = props.newCourse.cybersecurity_tool_ids.indexOf(toolId);
+  if (index === -1) {
+    props.newCourse.cybersecurity_tool_ids.push(toolId);
+  } else {
+    props.newCourse.cybersecurity_tool_ids.splice(index, 1);
+  }
+};
+
+// Check if tool is selected
+const isToolSelected = (toolId) => {
+  return Array.isArray(props.newCourse.cybersecurity_tool_ids) && 
+         props.newCourse.cybersecurity_tool_ids.includes(toolId);
+};
+
+// Similar functions for editing course
+const toggleEditToolSelection = (toolId) => {
+  if (!Array.isArray(props.editingCourse.cybersecurity_tool_ids)) {
+    props.editingCourse.cybersecurity_tool_ids = [];
+  }
+  
+  const index = props.editingCourse.cybersecurity_tool_ids.indexOf(toolId);
+  if (index === -1) {
+    props.editingCourse.cybersecurity_tool_ids.push(toolId);
+  } else {
+    props.editingCourse.cybersecurity_tool_ids.splice(index, 1);
+  }
+};
+
+const isEditToolSelected = (toolId) => {
+  return props.editingCourse && 
+         Array.isArray(props.editingCourse.cybersecurity_tool_ids) && 
+         props.editingCourse.cybersecurity_tool_ids.includes(toolId);
+};
+
+// Get selected tools names
+const selectedToolsNames = computed(() => {
+  if (!Array.isArray(props.newCourse.cybersecurity_tool_ids)) return [];
+  return props.newCourse.cybersecurity_tool_ids.map(toolId => {
+    return cybersecurityToolsOptions.value.find(t => t.id === toolId)?.name || '';
+  }).filter(Boolean);
 });
 
-// Update newCourse when tools selection changes
-const updateSelectedTools = () => {
-  if (toolsSelect.value) {
-    const selectedValues = toolsSelect.value.getValue(true);
-    props.newCourse.cybersecurity_tool_ids = selectedValues.map(item => item.value);
-  }
-};
+// Get selected edit tools names
+const selectedEditToolsNames = computed(() => {
+  if (!props.editingCourse || !Array.isArray(props.editingCourse.cybersecurity_tool_ids)) return [];
+  return props.editingCourse.cybersecurity_tool_ids.map(toolId => {
+    return cybersecurityToolsOptions.value.find(t => t.id === toolId)?.name || '';
+  }).filter(Boolean);
+});
 
-// Update newCourse when category selection changes
-const updateSelectedCategory = () => {
-  if (categorySelect.value) {
-    const selectedValue = categorySelect.value.getValue(true);
-    props.newCourse.category_id = selectedValue.length > 0 ? selectedValue[0].value : null;
-  }
-};
+// Get selected category name
+const selectedCategoryName = computed(() => {
+  return courseCategories.value.find(c => c.id === props.newCourse.category_id)?.name || 'Select category';
+});
+
+// Get selected edit category name
+const selectedEditCategoryName = computed(() => {
+  if (!props.editingCourse) return 'Select category';
+  return courseCategories.value.find(c => c.id === props.editingCourse.category_id)?.name || 'Select category';
+});
 </script>
 
 <template>
@@ -199,21 +266,30 @@ const updateSelectedCategory = () => {
             <div class="col-md-4">
               <div class="form-group mb-3">
                 <label class="form-label required">Category</label>
-                <select 
-                  id="course-category-select"
-                  class="form-select"
-                  @change="updateSelectedCategory"
-                  required
-                >
-                  <option value="">Select Category</option>
-                  <option 
-                    v-for="category in courseCategories" 
-                    :key="category.id" 
-                    :value="category.id"
+                <div class="dropdown multiselect-dropdown-container" @click.stop="showCategoryDropdown = !showCategoryDropdown">
+                  <button 
+                    class="dropdown-toggle multiselect-toggle" 
+                    type="button"
+                    :class="{ show: showCategoryDropdown }"
                   >
-                    {{ category.name }}
-                  </option>
-                </select>
+                    <span>{{ selectedCategoryName }}</span>
+                  </button>
+                  <ul 
+                    class="dropdown-menu multiselect-dropdown-menu" 
+                    :class="{ show: showCategoryDropdown }"
+                    v-click-outside="() => showCategoryDropdown = false"
+                  >
+                    <li v-for="category in courseCategories" :key="category.id">
+                      <a 
+                        class="dropdown-item multiselect-option" 
+                        href="#" 
+                        @click.prevent="newCourse.category_id = category.id; showCategoryDropdown = false"
+                      >
+                        {{ category.name }}
+                      </a>
+                    </li>
+                  </ul>
+                </div>
                 <div class="invalid-feedback">
                   Please select a category.
                 </div>
@@ -225,21 +301,87 @@ const updateSelectedCategory = () => {
             <div class="col-md-12">
               <div class="form-group mb-3">
                 <label class="form-label required">Cybersecurity Tools</label>
-                <select 
-                  id="cybersecurity-tools-select"
-                  class="form-select"
-                  multiple
-                  @change="updateSelectedTools"
-                  required
-                >
-                  <option 
-                    v-for="tool in cybersecurityTools" 
-                    :key="tool.id" 
-                    :value="tool.id"
+                <div class="dropdown multiselect-dropdown-container" @click.stop="showToolDropdown = !showToolDropdown">
+                  <button 
+                    class="dropdown-toggle multiselect-toggle" 
+                    type="button"
+                    :class="{ show: showToolDropdown }"
                   >
-                    🔧 {{ tool.name }}
-                  </option>
-                </select>
+                    <span v-if="newCourse.cybersecurity_tool_ids?.length">
+                      {{ newCourse.cybersecurity_tool_ids.length }} selected
+                    </span>
+                    <span v-else>Select tools...</span>
+                  </button>
+                  <div 
+                    class="dropdown-menu multiselect-dropdown-menu" 
+                    :class="{ show: showToolDropdown }"
+                    v-click-outside="() => showToolDropdown = false"
+                  >
+                    <!-- Search and add new tool -->
+                    <div class="multiselect-search d-flex mb-3">
+                      <input
+                        type="text"
+                        class="form-control me-2"
+                        v-model="newToolName"
+                        placeholder="Add new tool..."
+                        @keyup.enter="addNewTool"
+                      >
+                      <button 
+                        class="btn btn-primary" 
+                        @click="addNewTool"
+                        :disabled="!newToolName.trim()"
+                      >
+                        Add
+                      </button>
+                    </div>
+                    
+                    <!-- Tools list -->
+                    <div class="tools-list multiselect-options">
+                      <div 
+                        v-for="tool in cybersecurityToolsOptions" 
+                        :key="tool.id"
+                        class="multiselect-option-wrapper"
+                        :class="{ active: isToolSelected(tool.id) }"
+                      >
+                        <div class="multiselect-option-content">
+                          <div class="checkbox-wrapper">
+                            <input
+                              class="multiselect-checkbox"
+                              type="checkbox"
+                              :id="`tool-${tool.id}`"
+                              :checked="isToolSelected(tool.id)"
+                              @change="toggleToolSelection(tool.id)"
+                            >
+                            <label class="checkbox-label" :for="`tool-${tool.id}`">
+                              <span class="checkmark"></span>
+                            </label>
+                          </div>
+                          <div class="tool-info">
+                            <span class="tool-name">{{ tool.name }}</span>
+                            <span v-if="tool.isNew" class="badge multiselect-new-badge">New</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Selected tools chips -->
+                <div class="selected-tools multiselect-selected-tags mt-2">
+                  <span 
+                    v-for="(toolName, index) in selectedToolsNames" 
+                    :key="index"
+                    class="badge multiselect-tag"
+                  >
+                    {{ toolName }}
+                    <span 
+                      class="multiselect-tag-remove" 
+                      @click="toggleToolSelection(newCourse.cybersecurity_tool_ids[index])"
+                      aria-label="Remove"
+                    >×</span>
+                  </span>
+                </div>
+                
                 <div class="invalid-feedback">
                   Please select at least one tool.
                 </div>
@@ -597,22 +739,30 @@ const updateSelectedCategory = () => {
                 <div class="col-md-4">
                   <div class="form-group mb-3">
                     <label class="form-label required">Category</label>
-                    <select 
-                      id="edit-course-category-select"
-                      class="form-select"
-                      @change="updateSelectedCategory"
-                      required
-                    >
-                      <option value="">Select Category</option>
-                      <option 
-                        v-for="category in courseCategories" 
-                        :key="category.id" 
-                        :value="category.id"
-                        :selected="editingCourse.category_id === category.id"
+                    <div class="dropdown multiselect-dropdown-container" @click.stop="showEditCategoryDropdown = !showEditCategoryDropdown">
+                      <button 
+                        class="dropdown-toggle multiselect-toggle" 
+                        type="button"
+                        :class="{ show: showEditCategoryDropdown }"
                       >
-                        {{ category.name }}
-                      </option>
-                    </select>
+                        <span>{{ selectedEditCategoryName }}</span>
+                      </button>
+                      <ul 
+                        class="dropdown-menu multiselect-dropdown-menu" 
+                        :class="{ show: showEditCategoryDropdown }"
+                        v-click-outside="() => showEditCategoryDropdown = false"
+                      >
+                        <li v-for="category in courseCategories" :key="category.id">
+                          <a 
+                            class="dropdown-item multiselect-option" 
+                            href="#" 
+                            @click.prevent="editingCourse.category_id = category.id; showEditCategoryDropdown = false"
+                          >
+                            {{ category.name }}
+                          </a>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -621,22 +771,79 @@ const updateSelectedCategory = () => {
                 <div class="col-md-12">
                   <div class="form-group mb-3">
                     <label class="form-label required">Cybersecurity Tools</label>
-                    <select 
-                      id="edit-cybersecurity-tools-select"
-                      class="form-select"
-                      multiple
-                      @change="updateSelectedTools"
-                      required
-                    >
-                      <option 
-                        v-for="tool in cybersecurityTools" 
-                        :key="tool.id" 
-                        :value="tool.id"
-                        :selected="editingCourse.cybersecurity_tool_ids && editingCourse.cybersecurity_tool_ids.includes(tool.id)"
+                    <div class="dropdown multiselect-dropdown-container" @click.stop="showEditToolDropdown = !showEditToolDropdown">
+                      <button 
+                        class="dropdown-toggle multiselect-toggle" 
+                        type="button"
+                        :class="{ show: showEditToolDropdown }"
                       >
-                        🔧 {{ tool.name }}
-                      </option>
-                    </select>
+                        <span v-if="editingCourse.cybersecurity_tool_ids?.length">
+                          {{ editingCourse.cybersecurity_tool_ids.length }} selected
+                        </span>
+                        <span v-else>Select tools...</span>
+                      </button>
+                      <div 
+                        class="dropdown-menu multiselect-dropdown-menu" 
+                        :class="{ show: showEditToolDropdown }"
+                        v-click-outside="() => showEditToolDropdown = false"
+                      >
+                        <!-- Search and add new tool -->
+                        <div class="multiselect-search d-flex mb-3">
+                          <input
+                            type="text"
+                            class="form-control me-2"
+                            v-model="newToolName"
+                            placeholder="Add new tool..."
+                            @keyup.enter="addNewEditTool"
+                          >
+                          <button 
+                            class="btn btn-primary" 
+                            @click="addNewEditTool"
+                            :disabled="!newToolName.trim()"
+                          >
+                            Add
+                          </button>
+                        </div>
+                        
+                        <!-- Tools list -->
+                        <div class="tools-list multiselect-options">
+                          <div 
+                            v-for="tool in cybersecurityToolsOptions" 
+                            :key="tool.id"
+                            class="form-check multiselect-option"
+                            :class="{ active: isEditToolSelected(tool.id) }"
+                          >
+                            <input
+                              class="form-check-input multiselect-checkbox"
+                              type="checkbox"
+                              :id="`edit-tool-${tool.id}`"
+                              :checked="isEditToolSelected(tool.id)"
+                              @change="toggleEditToolSelection(tool.id)"
+                            >
+                            <label class="form-check-label" :for="`edit-tool-${tool.id}`">
+                              {{ tool.name }}
+                              <span v-if="tool.isNew" class="badge multiselect-new-badge">New</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Selected tools chips -->
+                    <div class="selected-tools multiselect-selected-tags mt-2">
+                      <span 
+                        v-for="(toolName, index) in selectedEditToolsNames" 
+                        :key="index"
+                        class="badge multiselect-tag"
+                      >
+                        {{ toolName }}
+                        <span 
+                          class="multiselect-tag-remove" 
+                          @click="toggleEditToolSelection(editingCourse.cybersecurity_tool_ids[index])"
+                          aria-label="Remove"
+                        >×</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -797,218 +1004,538 @@ const updateSelectedCategory = () => {
 </template>
 
 <style scoped>
-/* Add Choices.js styles */
-@import 'https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css';
-
-/* Custom styles for Choices.js */
-.choices {
-  margin-bottom: 0;
-}
-
-.choices__inner {
-  min-height: 38px;
-  border-radius: 0.375rem;
-  border: 1px solid #ced4da;
-  background-color: white;
-}
-
-.choices__list--multiple .choices__item {
-  background-color: #0d6efd;
-  border: 1px solid #0a58ca;
-  border-radius: 0.25rem;
-  margin-right: 0.375rem;
-  margin-bottom: 0.375rem;
-  padding: 0.25rem 0.75rem;
-}
-
-.choices__list--multiple .choices__item.is-highlighted {
-  background-color: #0a58ca;
-  border: 1px solid #084298;
-}
-
-.choices[data-type*="select-one"] .choices__inner {
-  padding-bottom: 0;
-}
-
-.choices__list--dropdown {
-  border: 1px solid #ced4da;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-  z-index: 1050;
-}
-
-/* Rest of your existing styles... */
+/* Base Styles */
 .course-management {
-  padding: 20px;
+  padding: 2rem;
+  background: white !important;
+  min-height: 100vh;
 }
 
+/* Card Styles */
 .card {
   border: none;
-  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  border-radius: 0.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  background: white !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+  margin-bottom: 2rem;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  padding: 1.25rem 1.5rem;
+  border-bottom: none;
 }
 
 .card-title {
   margin: 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #495057;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.card-title i {
+  font-size: 1.25rem;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Form Elements */
+.form-label {
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+  display: block;
 }
 
 .form-label.required::after {
   content: " *";
-  color: #dc3545;
+  color: #ef4444;
 }
 
+.form-control,
+.form-select {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+  transition: all 0.2s ease;
+  background-color: white !important;
+  color: #111827 !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  outline: none;
+}
+
+.form-control:hover,
+.form-select:hover {
+  border-color: #9ca3af;
+}
+
+.input-group-text {
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+  color: #4b5563;
+}
+
+.invalid-feedback {
+  color: #ef4444;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.form-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 8px;
+  padding: 0.625rem 1.25rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-sm {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.btn-success {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: white;
+}
+
+.btn-success:hover {
+  background-color: #059669;
+  border-color: #059669;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  border-color: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.btn-outline-secondary {
+  border-color: #9ca3af;
+  color: #4b5563;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #f3f4f6;
+}
+
+.btn-outline-warning {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.btn-outline-warning:hover {
+  background-color: #fef3c7;
+}
+
+.btn-outline-danger {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.btn-outline-danger:hover {
+  background-color: #fee2e2;
+}
+
+/* Table Styles */
+.table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead th {
+  background-color: #f9fafb;
+  color: #374151;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.table tbody td {
+  padding: 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Badges */
+.badge {
+  font-weight: 500;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+}
+
+.bg-success {
+  background-color: #10b981 !important;
+}
+
+.bg-warning {
+  background-color: #f59e0b !important;
+  color: white !important;
+}
+
+.bg-danger {
+  background-color: #ef4444 !important;
+}
+
+.bg-info {
+  background-color: #3b82f6 !important;
+}
+
+.bg-secondary {
+  background-color: #9ca3af !important;
+}
+
+/* Image Previews */
 .image-preview-container {
   position: relative;
   display: inline-block;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .preview-image {
   max-width: 200px;
   max-height: 200px;
-  border-radius: 0.375rem;
-}
-
-.preview-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border-radius: 0.375rem;
-}
-
-.image-preview-container:hover .preview-overlay {
-  opacity: 1;
-}
-
-.syllabus-item {
-  border: 1px solid #e9ecef;
-  transition: box-shadow 0.15s ease-in-out;
-}
-
-.syllabus-item:hover {
-  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.15);
-}
-
-.syllabus-item .card-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  padding: 0.75rem 1rem;
-}
-
-.table-hover tbody tr:hover {
-  background-color: rgba(0, 0, 0, 0.02);
-}
-
-.course-info h6 {
-  color: #495057;
-  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
 }
 
 .course-thumbnail {
-  max-width: 60px;
-  max-height: 60px;
-  border-radius: 0.375rem;
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
 }
 
 .no-thumbnail {
   width: 60px;
   height: 60px;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 0.375rem;
+  background-color: #f3f4f6;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #9ca3af;
 }
 
-.thumbnail-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Syllabus Items */
+.syllabus-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+  background-color: white !important;
 }
 
-.modal.show {
-  background-color: rgba(0, 0, 0, 0.5);
+.syllabus-item:hover {
+  border-color: #d1d5db;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.modal-dialog {
-  margin: 1.75rem auto;
+.syllabus-item .card-header {
+  background-color: #f9fafb;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.modal-content {
-  border: none;
-  border-radius: 0.5rem;
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+.syllabus-item .card-header h6 {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #111827;
 }
 
-.modal-header {
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
-  border-radius: 0.5rem 0.5rem 0 0;
+.syllabus-item .card-body {
+  padding: 1rem;
 }
 
-.btn-group .btn {
-  border-radius: 0.375rem;
-}
-
-.btn-group .btn:not(:last-child) {
-  margin-right: 0.25rem;
-}
-
+/* Video Preview */
 .video-preview {
-  border: 1px solid #dee2e6;
-  border-radius: 0.375rem;
+  border-radius: 8px;
   overflow: hidden;
 }
 
 .ratio iframe {
   border: none;
+  border-radius: 8px;
 }
 
-.spinner-border-sm {
-  width: 1rem;
-  height: 1rem;
+/* Modal Styles */
+.modal.show {
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex !important;
+  align-items: center;
 }
 
-/* Responsive adjustments */
+.modal-content {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background-color: white !important;
+}
+
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+/* Multiselect Dropdown */
+.multiselect-dropdown-container {
+  position: relative;
+}
+
+.multiselect-toggle {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background-color: white !important;
+  color: #111827 !important;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.multiselect-toggle:hover {
+  border-color: #9ca3af;
+}
+
+.multiselect-toggle:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  outline: none;
+}
+
+.multiselect-toggle::after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 0.5rem;
+  border-top: 5px solid #6b7280;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  transition: transform 0.2s ease;
+}
+
+.multiselect-toggle.show::after {
+  transform: rotate(180deg);
+}
+
+.multiselect-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: white !important;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(5px);
+  transition: all 0.2s ease;
+}
+
+.multiselect-dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.multiselect-search {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.multiselect-option-wrapper {
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.multiselect-option-wrapper:hover {
+  background-color: #f3f4f6;
+}
+
+.multiselect-option-wrapper.active {
+  background-color: #eef2ff;
+}
+
+.multiselect-option-content {
+  display: flex;
+  align-items: center;
+}
+
+.checkbox-wrapper {
+  margin-right: 0.75rem;
+}
+
+.multiselect-checkbox {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  appearance: none;
+  margin: 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.multiselect-checkbox:checked {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.tool-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tool-name {
+  font-size: 0.9375rem;
+}
+
+.multiselect-selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.multiselect-tag {
+  background-color: #eef2ff;
+  color: #4f46e5;
+  padding: 0.375rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.multiselect-tag-remove {
+  cursor: pointer;
+  color: #818cf8;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.multiselect-tag-remove:hover {
+  color: #4f46e5;
+}
+
+.multiselect-new-badge {
+  background-color: #06b6d4;
+  color: white;
+  font-size: 0.6875rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* Responsive Adjustments */
 @media (max-width: 768px) {
   .course-management {
-    padding: 10px;
+    padding: 1rem;
   }
   
-  .modal-dialog {
-    margin: 0.5rem;
+  .card-header {
+    padding: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
   }
   
   .table-responsive {
     font-size: 0.875rem;
   }
   
-  .course-thumbnail {
-    max-width: 40px;
-    max-height: 40px;
-  }
-  
+  .course-thumbnail,
   .no-thumbnail {
     width: 40px;
     height: 40px;
+  }
+  
+  .multiselect-dropdown-menu {
+    max-height: 250px;
   }
 }
 </style>

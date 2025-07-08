@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import NavbarAll from '../components/navbarall.vue'
 import FooterAll from '../components/footerall.vue'
+import CourseInformation from '../layouts/Course/CourseInformation.vue'
 
 const route = useRoute()
 const course = ref(null)
@@ -186,8 +187,8 @@ const toggleAccordion = (index) => {
               <span>{{ course.duration }}</span>
             </div>
             <router-link 
-              :to="`/enroll/${course.id}`" 
-              @click="handleNavigation(`/enroll/${course.id}`)" 
+              :to="`/course-info/${course.id}`" 
+              @click.prevent="handleNavigation(`/course-info/${course.id}`)" 
               class="enroll-button"
             >
               Enroll Now
